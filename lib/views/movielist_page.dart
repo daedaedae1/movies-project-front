@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../model/Movie.dart';
+import '../model/movie.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class MovieList extends StatefulWidget {
@@ -11,6 +12,7 @@ class MovieList extends StatefulWidget {
 
 class _MovieListState extends State<MovieList> {
   List<Movie> _movies = [];
+  List<int> _viewedMovies = [];
   int _currentPage = 0;
   bool _isFetching = false;
   bool _isSearchActive = false;
@@ -21,7 +23,12 @@ class _MovieListState extends State<MovieList> {
   void initState() {
     super.initState();
     _fetchMovies();
+    print("1");
+    _fetchViewedMovies();
+    print("2");
+    print("3");
     _scrollController.addListener(_onScroll);
+    print("4");
   }
 
   Future<void> _fetchMovies({String? query}) async {
@@ -29,53 +36,93 @@ class _MovieListState extends State<MovieList> {
 
     _isFetching = true;
 
-    final url = query == null
-        ? Uri.parse('http://localhost:8080/movies/get?page=$_currentPage')
-        : Uri.parse('http://localhost:8080/movies/search?query=$query&page=$_currentPage');
+    try {
+      final url = query == null
+          ? Uri.parse('http://localhost:8080/movies/get?page=$_currentPage')
+          : Uri.parse('http://localhost:8080/movies/search?query=$query&page=$_currentPage');
 
-    final response = await http.get(url);
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+        final List<dynamic> jsonList = jsonResponse['content'] as List<dynamic>;
+        final List<Movie> movies = jsonList.map<Movie>((jsonItem) => Movie.fromJson(jsonItem)).toList();
+
+        setState(() {
+          _movies.addAll(movies);
+          _currentPage++;
+        });
+      } else {
+        throw Exception('영화 목록을 불러오는 데 실패했습니다: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('영화 목록을 가져오는 중 오류 발생: $e');
+    } finally {
+      _isFetching = false;
+    }
+  }
+
+  Future<void> _fetchViewedMovies() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userid = prefs.getString('userid');
+
+    if (userid == null) return;
+
+    var url = Uri.parse('http://localhost:8080/viewing_history/$userid');
+    var response = await http.get(url);
 
     if (response.statusCode == 200) {
-      // 정상적 응답의 처리
-      final responseBody = utf8.decode(response.bodyBytes);
-      final Map<String, dynamic> jsonResponse = json.decode(responseBody);
-
-      final List<dynamic> jsonList = jsonResponse['content'] as List<dynamic>;
-
-      final List<Movie> movies = jsonList.map<Movie>((jsonItem) => Movie.fromJson(jsonItem)).toList();
+      final List<dynamic> viewedMoviesJson = json.decode(utf8.decode(response.bodyBytes));
       setState(() {
-        _movies.addAll(movies);
-        _currentPage++;
+        _viewedMovies = viewedMoviesJson.map<int>((jsonItem) => jsonItem['movieId'] as int).toList();
       });
     } else {
-      throw Exception('Failed to load movies');
+      throw Exception('시청 기록을 불러오는 데 실패했습니다: ${response.statusCode}');
     }
+  }
 
-    _isFetching = false;
+  Future<void> _recordViewingHistory(Movie movie) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userid = prefs.getString('userid');
+    if (userid == null) return;
+
+    var url = Uri.parse('http://localhost:8080/viewing_history'); // 서버 주소 교체
+
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: json.encode({
+        'userId': userid,  // 사용자 ID 교체
+        'movieId': movie.id,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('시청 기록 저장 완료');
+      await _fetchViewedMovies();  // 시청 기록을 다시 불러옴
+    } else {
+      throw Exception('시청 기록 저장 실패: ${response.statusCode}');
+    }
   }
 
   void _onSearch() {
     final query = _searchController.text;
     if (query.isNotEmpty) {
-      // 검색어가 있을 경우
       _movies.clear();
       _currentPage = 0;
       _isSearchActive = true;
       _fetchMovies(query: query).then((_) {
-        // 검색 결과가 로드된 후 스크롤을 맨 위로 올림
         _scrollController.animateTo(
-          0.0, // 스크롤 위치를 0으로 설정하여 맨 위로 이동
-          duration: Duration(milliseconds: 300), // 스크롤 이동에 걸리는 시간
-          curve: Curves.easeOut, // 이동 애니메이션 효과
+          0.0,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
         );
       });
     } else {
-      // 검색어가 비어있을 경우
       _movies.clear();
       _currentPage = 0;
       _isSearchActive = false;
       _fetchMovies().then((_) {
-        // 검색 결과가 로드된 후 스크롤을 맨 위로 올림
         _scrollController.animateTo(
           0.0,
           duration: Duration(milliseconds: 300),
@@ -86,16 +133,90 @@ class _MovieListState extends State<MovieList> {
   }
 
   void _onScroll() {
-    // 스크롤이 맨 아래에 도달했고, 현재 다른 데이터를 불러오고 있지 않을 때
     if (!_isFetching && _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      // 검색이 활성화된 상태라면, 현재 검색어로 추가 영화를 검색
       if (_isSearchActive) {
-        _fetchMovies(query: _searchController.text); // 검색어를 인자로 넘김.
+        _fetchMovies(query: _searchController.text);
       } else {
-        // 검색이 활성화되지 않았다면, 일반 영화 목록을 계속 불러옴
         _fetchMovies();
       }
     }
+  }
+
+  Widget _buildMovieCard(Movie movie) {
+    bool hasViewed = _viewedMovies.contains(movie.id);
+
+    return Card(
+      margin: EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4.0),
+                child: CachedNetworkImage(
+                  imageUrl: movie.posterPath,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  fit: BoxFit.cover,
+                  width: 100,
+                  height: 150,
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        movie.title,
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 5.0),
+                      Text(
+                        movie.overview,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: hasViewed
+                  ? TextButton(
+                onPressed: null,
+                child: Text('시청함'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.grey,
+                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                ),
+              )
+                  : TextButton(
+                onPressed: () => _recordViewingHistory(movie),
+                child: Text('보기'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue,
+                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -134,53 +255,7 @@ class _MovieListState extends State<MovieList> {
               controller: _scrollController,
               itemCount: _movies.length,
               itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  margin: EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () {
-                      // 영화 상세 정보 페이지로 이동하는 로직을 여기에 추가
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4.0),
-                          child: CachedNetworkImage(
-                            imageUrl: _movies[index].posterPath,
-                            placeholder: (context, url) => CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
-                            fit: BoxFit.cover,
-                            width: 100,
-                            height: 150,
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  _movies[index].title,
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                SizedBox(height: 5.0),
-                                Text(
-                                  _movies[index].overview,
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                return _buildMovieCard(_movies[index]);
               },
             ),
           ),
