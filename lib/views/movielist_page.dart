@@ -23,12 +23,8 @@ class _MovieListState extends State<MovieList> {
   void initState() {
     super.initState();
     _fetchMovies();
-    print("1");
     _fetchViewedMovies();
-    print("2");
-    print("3");
     _scrollController.addListener(_onScroll);
-    print("4");
   }
 
   Future<void> _fetchMovies({String? query}) async {
@@ -205,7 +201,7 @@ class _MovieListState extends State<MovieList> {
               )
                   : TextButton(
                 onPressed: () => _recordViewingHistory(movie),
-                child: Text('보기'),
+                child: Text('시청'),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.blue,
