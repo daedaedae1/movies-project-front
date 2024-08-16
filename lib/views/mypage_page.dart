@@ -23,8 +23,8 @@ class _UserInfoEditPageState extends State<MyPage> {
   }
 
   _loadUserInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userid = prefs.getString('userid');
+    final prefs = await SharedPreferences.getInstance();
+    final userid = prefs.getInt('userIdNumeric');
     if (userid != null) {
       var url = Uri.parse('http://localhost:8080/api/details/$userid');
       var response = await http.get(url);

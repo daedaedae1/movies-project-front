@@ -3,7 +3,26 @@ import 'login_page.dart';
 import 'signup_page.dart';
 import 'mypage_page.dart';
 import 'movielist_page.dart';
+import 'contentbasedrecommend_page.dart';
+import 'collaborativerecommend_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Orora',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MainPage(),
+    );
+  }
+}
 
 class MainPage extends StatefulWidget {
   @override
@@ -12,7 +31,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  bool _isLoggedIn = false; // 로그인 상태를 저장하는 변수
+  bool _isLoggedIn = false;
+  int? _userId;
 
   @override
   void initState() {
@@ -20,21 +40,25 @@ class _MainPageState extends State<MainPage> {
     _checkLoginStatus();
   }
 
-  _checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    final userId = prefs.getInt('userIdNumeric');
+
     setState(() {
       _isLoggedIn = isLoggedIn;
+      _userId = userId;
     });
   }
 
-  // 로그아웃 메소드
-  logout() async {
+  Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('userId'); // 로그아웃 시 사용자 ID 제거
 
     setState(() {
       _isLoggedIn = false;
+      _userId = null;
     });
   }
 
@@ -59,7 +83,6 @@ class _MainPageState extends State<MainPage> {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MainPage()));
       } else if (index == 1) {
-        // 로그아웃 메소드 호출
         logout();
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MainPage()));
@@ -68,10 +91,6 @@ class _MainPageState extends State<MainPage> {
             context, MaterialPageRoute(builder: (context) => MyPage()));
       }
     }
-  }
-
-  void _printMessage() {
-    print("isLoggedIn: $_isLoggedIn");
   }
 
   @override
@@ -110,9 +129,7 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: Text('Orora'),
       ),
-      body: _isLoggedIn
-          ? _buildLoggedInView() // 로그인 상태일 때의 화면
-          : _buildLoggedOutView(), // 로그아웃 상태일 때의 화면
+      body: _isLoggedIn ? _buildLoggedInView() : _buildLoggedOutView(),
       bottomNavigationBar: BottomNavigationBar(
         items: _navItems,
         currentIndex: _selectedIndex,
@@ -122,7 +139,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // 로그인 상태일 때의 화면
   Widget _buildLoggedInView() {
     return Center(
       child: Column(
@@ -141,16 +157,38 @@ class _MainPageState extends State<MainPage> {
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              _printMessage();
+              if (_userId != null) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ContentBasedRecommendPage(
+                          userId: _userId!,
+                        )));
+              }
             },
-            child: Text('클릭하세요'),
+            child: Text('콘텐츠 기반 추천'),
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(180, 30),
+            ),
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CollaborativeRecommendPage()));
+            },
+            child: Text('협업 필터링 추천'),
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(180, 30),
+            ),
           ),
         ],
       ),
     );
   }
 
-  // 로그아웃 상태일 때의 화면
   Widget _buildLoggedOutView() {
     return SingleChildScrollView(
       child: Padding(
@@ -165,16 +203,8 @@ class _MainPageState extends State<MainPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
-            Image.asset(
-              'assets/intro_image.jpg', // 앱의 이미지 에셋을 활용하세요
-              width: double.infinity,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-            SizedBox(height: 16),
             Text(
-              'Orora는 영화를 더 쉽게 찾고 관리할 수 있는 플랫폼입니다. 다양한 영화 정보를 검색하고, 맞춤형 추천을 받아보세요.',
+              'Orora는 영화를 더 쉽게 찾고 관리할 수 있는 플랫폼입니다.',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 16),

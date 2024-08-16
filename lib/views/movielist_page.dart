@@ -60,7 +60,7 @@ class _MovieListState extends State<MovieList> {
 
   Future<void> _fetchViewedMovies() async {
     final prefs = await SharedPreferences.getInstance();
-    final userid = prefs.getString('userid');
+    final userid = prefs.getInt('userIdNumeric');
 
     if (userid == null) return;
 
@@ -79,7 +79,7 @@ class _MovieListState extends State<MovieList> {
 
   Future<void> _recordViewingHistory(Movie movie) async {
     final prefs = await SharedPreferences.getInstance();
-    final userid = prefs.getString('userid');
+    final userid =prefs.getInt('userIdNumeric');
     if (userid == null) return;
 
     var url = Uri.parse('http://localhost:8080/viewing_history'); // 서버 주소 교체

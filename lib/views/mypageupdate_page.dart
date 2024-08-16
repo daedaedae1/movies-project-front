@@ -22,8 +22,8 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
   }
 
   _loadUserInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userid = prefs.getString('userid');
+    final prefs = await SharedPreferences.getInstance();
+    final userid = prefs.getInt('userIdNumeric');
     if (userid != null) {
       var url = Uri.parse('http://localhost:8080/api/details/$userid');
       var response = await http.get(url);
@@ -45,7 +45,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
 
   Future<void> _updateUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
-    final userid = prefs.getString('userid');
+    final userid = prefs.getInt('userIdNumeric');
     if (userid != null) {
       var url = Uri.parse('http://localhost:8080/api/$userid/update');
       var response = await http.post(
