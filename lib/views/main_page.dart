@@ -4,7 +4,6 @@ import 'signup_page.dart';
 import 'mypage_page.dart';
 import 'movielist_page.dart';
 import 'contentbasedrecommend_page.dart';
-import 'collaborativerecommend_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -126,10 +125,33 @@ class _MainPageState extends State<MainPage> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Orora'),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            backgroundColor: Colors.transparent, // 상단바를 투명하게 설정
+            elevation: 0, // 그림자 제거
+            pinned: true, // 스크롤 시 상단바가 고정되도록 설정
+            flexibleSpace: FlexibleSpaceBar(
+              title: Center(
+                child: Text(
+                  'Orora',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
+              titlePadding: EdgeInsets.all(0), // Title padding 설정
+              collapseMode: CollapseMode.parallax,
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              _isLoggedIn ? _buildLoggedInView() : _buildLoggedOutView(),
+            ),
+          ),
+        ],
       ),
-      body: _isLoggedIn ? _buildLoggedInView() : _buildLoggedOutView(),
       bottomNavigationBar: BottomNavigationBar(
         items: _navItems,
         currentIndex: _selectedIndex,
@@ -139,87 +161,136 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _buildLoggedInView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MovieList()));
-            },
-            child: Text('영화 리스트'),
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(130, 30),
-            ),
-          ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              if (_userId != null) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ContentBasedRecommendPage(
-                          userId: _userId!,
-                        )));
-              }
-            },
-            child: Text('콘텐츠 기반 추천'),
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(180, 30),
-            ),
-          ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CollaborativeRecommendPage()));
-            },
-            child: Text('협업 필터링 추천'),
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(180, 30),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoggedOutView() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+  // SliverChildListDelegate는 List<Widget>를 필요로 함.
+  // 로그인 됐을 때의 화면
+  List<Widget> _buildLoggedInView() {
+    return [
+      Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Orora에 오신 것을 환영합니다!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MovieList()),
+                );
+              },
+              child: Text('영화 리스트'),
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(130, 30),
               ),
             ),
-            Text(
-              'Orora는 영화를 더 쉽게 찾고 관리할 수 있는 플랫폼입니다.',
-              style: TextStyle(fontSize: 16),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                if (_userId != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ContentBasedRecommendPage(
+                        userId: _userId!,
+                      ),
+                    ),
+                  );
+                }
+              },
+              child: Text('콘텐츠 기반 추천'),
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(180, 30),
+              ),
             ),
-            SizedBox(height: 16),
-            Text(
-              '회원가입 후 로그인하시면, 시청 기록을 관리하고, 개인 맞춤형 영화 추천을 받으실 수 있습니다.',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Text(
-              '지금 바로 가입하고 Orora의 다양한 기능을 만나보세요!',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            SizedBox(height: 10),
           ],
         ),
       ),
-    );
+    ];
+  }
+
+  // 로그아웃 됐을 때의 화면
+  List<Widget> _buildLoggedOutView() {
+    return [
+      SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // 첫 번째 블럭: 설명 내용 - 이미지
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight, // 우측 정렬
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 30), // 오른쪽 여백 설정
+                        child: Text(
+                          '시청 기반의 영화 추천 사이트',
+                          style: TextStyle(fontSize: 25),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Image.network(
+                      'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 40),
+
+              // 두 번째 블럭: 이미지 - 설명 내용
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Image.network(
+                      'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      '회원가입 후 로그인하시면, 시청 기록을 관리하고, 개인 맞춤형 영화 추천을 받으실 수 있습니다.',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+
+              // 세 번째 블럭: 가운데 정렬된 이미지와 설명 내용
+              Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
+                  children: <Widget>[
+                    Image.network(
+                      'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      '지금 바로 가입하고 Orora의 다양한 기능을 만나보세요!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    ];
   }
 }
