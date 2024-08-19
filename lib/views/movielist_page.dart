@@ -79,7 +79,7 @@ class _MovieListState extends State<MovieList> {
 
   Future<void> _recordViewingHistory(Movie movie) async {
     final prefs = await SharedPreferences.getInstance();
-    final userid =prefs.getInt('userIdNumeric');
+    final userid = prefs.getInt('userIdNumeric');
     if (userid == null) return;
 
     var url = Uri.parse('http://localhost:8080/viewing_history'); // 서버 주소 교체
@@ -88,7 +88,7 @@ class _MovieListState extends State<MovieList> {
       url,
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: json.encode({
-        'userId': userid,  // 사용자 ID 교체
+        'userId': userid,
         'movieId': movie.id,
       }),
     );
@@ -98,6 +98,26 @@ class _MovieListState extends State<MovieList> {
       await _fetchViewedMovies();  // 시청 기록을 다시 불러옴
     } else {
       throw Exception('시청 기록 저장 실패: ${response.statusCode}');
+    }
+  }
+
+  Future<void> _deleteViewingHistory(Movie movie) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userid = prefs.getInt('userIdNumeric');
+    if (userid == null) return;
+
+    var url = Uri.parse('http://localhost:8080/viewing_history?userId=$userid&movieId=${movie.id}'); // 쿼리 파라미터 사용
+
+    var response = await http.delete(
+      url,
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+    );
+
+    if (response.statusCode == 204) {
+      print('시청 기록 삭제 완료');
+      await _fetchViewedMovies();  // 시청 기록을 다시 불러옴
+    } else {
+      throw Exception('시청 기록 삭제 실패: ${response.statusCode}');
     }
   }
 
@@ -191,11 +211,11 @@ class _MovieListState extends State<MovieList> {
               alignment: Alignment.centerRight,
               child: hasViewed
                   ? TextButton(
-                onPressed: null,
-                child: Text('시청함'),
+                onPressed: () => _deleteViewingHistory(movie),
+                child: Text('시청 취소'),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Colors.red,
                   padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                 ),
               )

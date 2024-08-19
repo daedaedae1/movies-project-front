@@ -5,10 +5,27 @@ import 'dart:convert';
 import 'main_page.dart';
 
 class SignUpPage extends StatelessWidget {
-  // TextEditingController 인스턴스 생성
   final nameController = TextEditingController();
   final useridController = TextEditingController();
-  final passwordController = TextEditingController();
+  final pwdController = TextEditingController();
+
+  Future<bool> _checkUserIdExists(String userid) async {
+    var url = Uri.parse('http://localhost:8080/api/checkUserId/$userid');
+    try {
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['exists'];
+      } else {
+        print('Failed to check user ID. Status code: ${response.statusCode}');
+        return false; // Assume the ID does not exist if the request fails
+      }
+    } catch (e) {
+      print('Error checking user ID: $e');
+      return false; // Assume the ID does not exist if there is an exception
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,45 +35,98 @@ class SignUpPage extends StatelessWidget {
         padding: EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: '이름'),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
+              child: TextField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: '이름'),
+              ),
             ),
-            TextField(
-              controller: useridController,
-              decoration: InputDecoration(labelText: '아이디'),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
+              child: TextField(
+                controller: useridController,
+                decoration: InputDecoration(labelText: '아이디'),
+              ),
             ),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(labelText: '비밀번호'),
-              obscureText: true,
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
+              child: TextField(
+                obscureText: true,
+                controller: pwdController,
+                decoration: InputDecoration(labelText: '비밀번호'),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                // 사용자 입력을 이용해 SignUpModel 객체 생성
+                // 모든 필드가 입력되었는지 확인
+                if (nameController.text.isEmpty ||
+                    useridController.text.isEmpty ||
+                    pwdController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('모든 필드를 입력해주세요.'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                // 중복 아이디 확인
+                final userIdExists = await _checkUserIdExists(useridController.text);
+                if (userIdExists) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('이미 존재하는 아이디입니다.'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                // 회원가입 요청
                 User user = User(
                   name: nameController.text,
                   userid: useridController.text,
-                  pwd: passwordController.text,
+                  pwd: pwdController.text,
                 );
 
                 var url = Uri.parse('http://localhost:8080/api/signup');
-                var response = await http.post(url,
-                    headers: {"Content-Type": "application/json"},
-                    body: json
-                        .encode(user.toJson())); // toJson() 메서드를 이용해 JSON으로 변환
+                try {
+                  var response = await http.post(url,
+                      headers: {"Content-Type": "application/json"},
+                      body: json.encode(user.toJson()));
 
-                if (response.statusCode == 200) {
-                  print('회원가입 성공: ${response.body}');
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => MainPage()));
-                } else {
-                  print('회원가입 실패: ${response.statusCode}');
+                  if (response.statusCode == 200) {
+                    print('회원가입 성공: ${response.body}');
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => MainPage()));
+                  } else {
+                    print('회원가입 실패: ${response.statusCode}');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('회원가입 실패: ${response.statusCode}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  print('회원가입 중 오류 발생: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('회원가입 중 오류 발생: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
               },
               child: Text('회원가입'),
-            )
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(200, 40),
+                textStyle: TextStyle(fontSize: 16),
+              ),
+            ),
           ],
         ),
       ),

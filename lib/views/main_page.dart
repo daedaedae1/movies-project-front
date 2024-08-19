@@ -5,6 +5,8 @@ import 'mypage_page.dart';
 import 'movielist_page.dart';
 import 'contentbasedrecommend_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // JSON 파싱을 위한 import
 
 void main() {
   runApp(MyApp());
@@ -51,14 +53,33 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-    await prefs.remove('userId'); // 로그아웃 시 사용자 ID 제거
+    // 서버에 로그아웃 요청을 보냅니다.
+    var url = Uri.parse('http://localhost:8080/api/logout'); // 서버 URL을 설정하세요.
+    var response = await http.post(url,
+        headers: {'Content-Type': 'application/json; charset=UTF-8'}
+    );
 
-    setState(() {
-      _isLoggedIn = false;
-      _userId = null;
-    });
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      // 서버에서 로그아웃이 성공적으로 처리되었을 경우
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', false);
+      await prefs.remove('userIdNumeric'); // 로그아웃 시 사용자 ID 제거
+
+      setState(() {
+        _isLoggedIn = false;
+        _userId = null;
+      });
+
+      print(data['success']);
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MainPage()));
+
+    } else {
+      // 로그아웃 요청이 실패했을 경우
+      print('로그아웃 실패: ${response.reasonPhrase}');
+    }
   }
 
   void _navigateToSelectedPage(int index) {
@@ -83,8 +104,6 @@ class _MainPageState extends State<MainPage> {
             context, MaterialPageRoute(builder: (context) => MainPage()));
       } else if (index == 1) {
         logout();
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MainPage()));
       } else if (index == 2) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MyPage()));
@@ -145,10 +164,9 @@ class _MainPageState extends State<MainPage> {
               collapseMode: CollapseMode.parallax,
             ),
           ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              _isLoggedIn ? _buildLoggedInView() : _buildLoggedOutView(),
-            ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: _isLoggedIn ? _buildLoggedInView() : _buildLoggedOutView(),
           ),
         ],
       ),
@@ -161,136 +179,132 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // SliverChildListDelegate는 List<Widget>를 필요로 함.
   // 로그인 됐을 때의 화면
-  List<Widget> _buildLoggedInView() {
-    return [
-      Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
+  Widget _buildLoggedInView() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // Column이 최소 크기만큼만 차지하도록 설정
+        mainAxisAlignment: MainAxisAlignment.center, // 수직 중앙 정렬
+        crossAxisAlignment: CrossAxisAlignment.center, // 수평 중앙 정렬
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MovieList()),
+              );
+            },
+            child: Text('영화 리스트'),
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(130, 30),
+            ),
+          ),
+          SizedBox(height: 10), // 버튼 사이의 간격
+          ElevatedButton(
+            onPressed: () {
+              if (_userId != null) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MovieList()),
-                );
-              },
-              child: Text('영화 리스트'),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(130, 30),
-              ),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                if (_userId != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ContentBasedRecommendPage(
-                        userId: _userId!,
-                      ),
+                  MaterialPageRoute(
+                    builder: (context) => ContentBasedRecommendPage(
+                      userId: _userId!,
                     ),
-                  );
-                }
-              },
-              child: Text('콘텐츠 기반 추천'),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(180, 30),
-              ),
+                  ),
+                );
+              }
+            },
+            child: Text('콘텐츠 기반 추천'),
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(180, 30),
             ),
-            SizedBox(height: 10),
-          ],
-        ),
+          ),
+        ],
       ),
-    ];
+    );
   }
 
   // 로그아웃 됐을 때의 화면
-  List<Widget> _buildLoggedOutView() {
-    return [
-      SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              // 첫 번째 블럭: 설명 내용 - 이미지
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight, // 우측 정렬
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 30), // 오른쪽 여백 설정
-                        child: Text(
-                          '시청 기반의 영화 추천 사이트',
-                          style: TextStyle(fontSize: 25),
-                        ),
+  Widget _buildLoggedOutView() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // 첫 번째 블럭: 설명 내용 - 이미지
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight, // 우측 정렬
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 30), // 오른쪽 여백 설정
+                      child: Text(
+                        '시청 기반의 영화 추천 사이트',
+                        style: TextStyle(fontSize: 25),
                       ),
                     ),
                   ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: Image.network(
-                      'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 40),
-
-              // 두 번째 블럭: 이미지 - 설명 내용
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Image.network(
-                      'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      '회원가입 후 로그인하시면, 시청 기록을 관리하고, 개인 맞춤형 영화 추천을 받으실 수 있습니다.',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-
-              // 세 번째 블럭: 가운데 정렬된 이미지와 설명 내용
-              Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
-                  children: <Widget>[
-                    Image.network(
-                      'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      '지금 바로 가입하고 Orora의 다양한 기능을 만나보세요!',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
                 ),
-              )
-            ],
-          ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Image.network(
+                    'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                    height: 300,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 40),
+
+            // 두 번째 블럭: 이미지 - 설명 내용
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Image.network(
+                    'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    '회원가입 후 로그인하시면, 시청 기록을 관리하고, 개인 맞춤형 영화 추천을 받으실 수 있습니다.',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+
+            // 세 번째 블럭: 가운데 정렬된 이미지와 설명 내용
+            Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
+                children: <Widget>[
+                  Image.network(
+                    'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '지금 바로 가입하고 Orora의 다양한 기능을 만나보세요!',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
-    ];
+    );
   }
 }

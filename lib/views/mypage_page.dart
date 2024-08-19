@@ -44,7 +44,7 @@ class _UserInfoEditPageState extends State<MyPage> {
 
   Future<void> deleteUserAccount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userid = prefs.getString('userid');
+    final userid = prefs.getInt('userIdNumeric');
     if (userid != null) {
       var url = Uri.parse('http://localhost:8080/api/$userid/delete');
       var response = await http.delete(url);
@@ -72,7 +72,7 @@ class _UserInfoEditPageState extends State<MyPage> {
           children: <Widget>[
             userInfoTile('ID', _useridController.text),
             userInfoTile('이름', _nameController.text),
-            userInfoTile('PWD', _pwdController.text),
+            userInfoTile('PWD', _obscuredPassword(_pwdController.text)),
             SizedBox(height: 20),
             Divider(),
             updateButton(context, '회원 수정', MyPageUpdate()),
@@ -90,6 +90,10 @@ class _UserInfoEditPageState extends State<MyPage> {
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
     );
+  }
+
+  String _obscuredPassword(String password) {
+    return '*' * password.length;
   }
 
   Widget updateButton(BuildContext context, String label, Widget page) {
