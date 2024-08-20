@@ -44,12 +44,22 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         // 로그인 실패 처리
         print('로그인 실패');
-        // 사용자에게 로그인 실패 메시지를 표시하는 코드 추가
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('ログインに失敗しました。'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } else {
       // 서버 오류 처리
       print('서버 오류: ${response.statusCode}');
-      // 사용자에게 서버 오류 메시지를 표시하는 코드 추가
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('ログインに失敗しました。'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

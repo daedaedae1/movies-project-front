@@ -178,7 +178,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // 로그인 됐을 때의 화면
+// 로그인 됐을 때의 화면
   Widget _buildLoggedInView() {
     return Center(
       child: Column(
@@ -186,41 +186,78 @@ class _MainPageState extends State<MainPage> {
         mainAxisAlignment: MainAxisAlignment.center, // 수직 중앙 정렬
         crossAxisAlignment: CrossAxisAlignment.center, // 수평 중앙 정렬
         children: <Widget>[
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MovieList()),
-              );
-            },
-            child: Text('映画リスト'),
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(130, 30),
-            ),
-          ),
-          SizedBox(height: 20), // 버튼 사이의 간격
-          ElevatedButton(
-            onPressed: () {
-              if (_userId != null) {
+          // 영화 리스트 버튼
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10.0), // 버튼 사이에 간격 추가
+            child: ElevatedButton.icon(
+              onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => ContentBasedRecommendPage(
-                      userId: _userId!,
-                    ),
-                  ),
+                  MaterialPageRoute(builder: (context) => MovieList()),
                 );
-              }
-            },
-            child: Text('映画おすすめ'),
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(180, 30),
+              },
+              icon: Icon(Icons.movie, color: Colors.white),
+              label: Text(
+                '映画リスト',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent, // 버튼 배경색
+                fixedSize: Size(200, 60), // 버튼 크기
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0), // 버튼 모서리 둥글게
+                ),
+                elevation: 8, // 버튼 그림자
+              ),
             ),
+          ),
+          // 컨텐츠 기반 추천 버튼
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10.0), // 버튼 사이에 간격 추가
+            child: ElevatedButton.icon(
+              onPressed: () {
+                if (_userId != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ContentBasedRecommendPage(
+                        userId: _userId!,
+                      ),
+                    ),
+                  );
+                }
+              },
+              icon: Icon(Icons.star, color: Colors.white),
+              label: Text(
+                '映画おすすめ',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange, // 버튼 배경색
+                fixedSize: Size(200, 60), // 버튼 크기
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0), // 버튼 모서리 둥글게
+                ),
+                elevation: 8, // 버튼 그림자
+              ),
+            ),
+          ),
+          // 추가적인 UI 요소 - 설명 텍스트
+          SizedBox(height: 30), // 버튼과 설명 사이의 간격
+          Text(
+            'お気軽に映画リストやおすすめ機能をお試しください！',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              color: Colors.grey[700],
+            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
+
 
   // 로그아웃 됐을 때의 화면
   Widget _buildLoggedOutView() {

@@ -131,7 +131,9 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
       body: _isFetching
           ? Center(child: CircularProgressIndicator())
           : _hasError
-          ? Center(child: Text('영화 추천을 가져오는 데 오류가 발생했습니다.'))
+          ? Center(child: Text('映画推薦を取得する際にエラーが発生しました。'))
+          : _displayedMovies.isEmpty
+          ? Center(child: Text('視聴履歴を登録してください！'))
           : ListView.builder(
         itemCount: _displayedMovies.length,
         itemBuilder: (BuildContext context, int index) {
