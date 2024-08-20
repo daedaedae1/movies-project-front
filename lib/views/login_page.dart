@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('로그인'),
+        title: Text('Orora'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
               margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
               child: TextField(
                 controller: _useridController,
-                decoration: InputDecoration(labelText: '아이디'),
+                decoration: InputDecoration(labelText: 'ID'),
               ),
             ),
             Container(
@@ -75,13 +75,13 @@ class _LoginPageState extends State<LoginPage> {
               child: TextField(
                 obscureText: true,
                 controller: _pwdController,
-                decoration: InputDecoration(labelText: '비밀번호'),
+                decoration: InputDecoration(labelText: 'PWD'),
               ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _login,
-              child: Text('로그인'),
+              child: Text('ログイン'),
             ),
           ],
         ),

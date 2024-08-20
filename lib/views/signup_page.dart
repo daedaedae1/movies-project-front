@@ -30,7 +30,7 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('회원가입')),
+      appBar: AppBar(title: Text('会員登録')),
       body: Padding(
         padding: EdgeInsets.all(20.0),
         child: Column(
@@ -39,14 +39,14 @@ class SignUpPage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
               child: TextField(
                 controller: nameController,
-                decoration: InputDecoration(labelText: '이름'),
+                decoration: InputDecoration(labelText: 'NAME'),
               ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
               child: TextField(
                 controller: useridController,
-                decoration: InputDecoration(labelText: '아이디'),
+                decoration: InputDecoration(labelText: 'ID'),
               ),
             ),
             Container(
@@ -54,7 +54,7 @@ class SignUpPage extends StatelessWidget {
               child: TextField(
                 obscureText: true,
                 controller: pwdController,
-                decoration: InputDecoration(labelText: '비밀번호'),
+                decoration: InputDecoration(labelText: 'PWD'),
               ),
             ),
             SizedBox(height: 20),
@@ -66,7 +66,7 @@ class SignUpPage extends StatelessWidget {
                     pwdController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('모든 필드를 입력해주세요.'),
+                      content: Text('すべての項目を入力してください。'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -78,7 +78,7 @@ class SignUpPage extends StatelessWidget {
                 if (userIdExists) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('이미 존재하는 아이디입니다.'),
+                      content: Text('すでに存在するIDです。'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -121,9 +121,9 @@ class SignUpPage extends StatelessWidget {
                   );
                 }
               },
-              child: Text('회원가입'),
+              child: Text('登録'),
               style: ElevatedButton.styleFrom(
-                fixedSize: Size(200, 40),
+                fixedSize: Size(140, 40),
                 textStyle: TextStyle(fontSize: 16),
               ),
             ),

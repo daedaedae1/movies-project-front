@@ -53,7 +53,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> logout() async {
-    // 서버에 로그아웃 요청을 보냅니다.
     var url = Uri.parse('http://localhost:8080/api/logout'); // 서버 URL을 설정하세요.
     var response = await http.post(url,
         headers: {'Content-Type': 'application/json; charset=UTF-8'}
@@ -117,29 +116,29 @@ class _MainPageState extends State<MainPage> {
         ? [
       BottomNavigationBarItem(
         icon: Icon(Icons.home),
-        label: '홈',
+        label: 'ホーム',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.exit_to_app),
-        label: '로그아웃',
+        label: 'ログアウト',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.person),
-        label: '마이페이지',
+        label: '会員情報',
       ),
     ]
         : [
       BottomNavigationBarItem(
         icon: Icon(Icons.home),
-        label: '홈',
+        label: 'ホーム',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.login),
-        label: '로그인',
+        label: 'ログイン',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.app_registration),
-        label: '회원가입',
+        label: '会員登録',
       ),
     ];
 
@@ -194,12 +193,12 @@ class _MainPageState extends State<MainPage> {
                 MaterialPageRoute(builder: (context) => MovieList()),
               );
             },
-            child: Text('영화 리스트'),
+            child: Text('映画リスト'),
             style: ElevatedButton.styleFrom(
               fixedSize: Size(130, 30),
             ),
           ),
-          SizedBox(height: 10), // 버튼 사이의 간격
+          SizedBox(height: 20), // 버튼 사이의 간격
           ElevatedButton(
             onPressed: () {
               if (_userId != null) {
@@ -213,7 +212,7 @@ class _MainPageState extends State<MainPage> {
                 );
               }
             },
-            child: Text('콘텐츠 기반 추천'),
+            child: Text('映画おすすめ'),
             style: ElevatedButton.styleFrom(
               fixedSize: Size(180, 30),
             ),
@@ -226,85 +225,106 @@ class _MainPageState extends State<MainPage> {
   // 로그아웃 됐을 때의 화면
   Widget _buildLoggedOutView() {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // 첫 번째 블럭: 설명 내용 - 이미지
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight, // 우측 정렬
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 30), // 오른쪽 여백 설정
-                      child: Text(
-                        '시청 기반의 영화 추천 사이트',
-                        style: TextStyle(fontSize: 25),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // 첫 번째 블럭: 설명 내용 - 이미지
+          Container(
+            color: Colors.cyan, // 첫 번째 블럭의 배경색 설정
+            child: Padding(
+              padding: const EdgeInsets.all(60.0), // 배경색 안쪽에 패딩 적용
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight, // 우측 정렬
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 100), // 텍스트의 오른쪽 여백 설정
+                        child: Text(
+                          '視聴履歴に基づいた\n映画推薦サイト',
+                          style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold), // 텍스트 설정
+                          textAlign: TextAlign.right,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Image.network(
-                    'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
-                    height: 300,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 40),
-
-            // 두 번째 블럭: 이미지 - 설명 내용
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Image.network(
-                    'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    '회원가입 후 로그인하시면, 시청 기록을 관리하고, 개인 맞춤형 영화 추천을 받으실 수 있습니다.',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-
-            // 세 번째 블럭: 가운데 정렬된 이미지와 설명 내용
-            Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
-                children: <Widget>[
-                  Image.network(
-                    'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    '지금 바로 가입하고 Orora의 다양한 기능을 만나보세요!',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 200), // 이미지 오른쪽 여백 설정
+                      child: Image.network(
+                        'assets/images/first.png', // 여기에 이미지 URL을 입력하세요.
+                        height: 300,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+
+          // 두 번째 블럭: 이미지 - 설명 내용
+          Container(
+            color: Colors.white, // 두 번째 블럭의 배경색 설정
+            child: Padding(
+              padding: const EdgeInsets.all(60.0), // 배경색 안쪽에 패딩 적용
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 100), // 이미지 오른쪽 여백 설정
+                      child: Image.network(
+                        'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      '회원가입 후 로그인하시면, 시청 기록을 관리하고,\n개인 맞춤형 영화 추천을 받으실 수 있습니다.',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 세 번째 블럭: 가운데 정렬된 이미지와 설명 내용
+          Container(
+            color: Colors.cyan[100], // 세 번째 블럭의 배경색 설정
+            child: Padding(
+              padding: const EdgeInsets.all(60.0), // 배경색 안쪽에 패딩 적용
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
+                  children: <Widget>[
+                    Image.network(
+                      'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      '지금 바로 가입하고 Orora의 추천 기능을 만나보세요!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
 }

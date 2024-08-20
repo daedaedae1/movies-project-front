@@ -83,9 +83,9 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
                   imageUrl: movie.posterPath,
                   placeholder: (context, url) => CircularProgressIndicator(),
                   errorWidget: (context, url, error) => Icon(Icons.error),
-                  fit: BoxFit.cover,
-                  width: 100,
-                  height: 150,
+                  fit: BoxFit.fill,
+                  width: 120,
+                  height: 170,
                 ),
               ),
               Expanded(
@@ -97,7 +97,7 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
                       Text(
                         movie.title,
                         style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 19.0,
                           fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -106,6 +106,9 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
                       Text(
                         movie.overview,
                         maxLines: 3,
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -123,7 +126,7 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('콘텐츠 기반 추천'),
+        title: Text('視聴履歴からの推薦'),
       ),
       body: _isFetching
           ? Center(child: CircularProgressIndicator())

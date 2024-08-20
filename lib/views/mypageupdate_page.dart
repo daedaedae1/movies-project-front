@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'main_page.dart';
+import 'mypage_page.dart';
 
 class MyPageUpdate extends StatefulWidget {
   @override
@@ -62,7 +62,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
         // 성공적으로 업데이트됨
         print('User updated successfully');
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => MainPage()),
+          MaterialPageRoute(builder: (context) => MyPage()),
           (Route<dynamic> route) => false,
         );
       } else {
@@ -76,7 +76,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('회원 정보 수정'),
+        title: Text('アカウント設定'),
       ),
       body: _userInfo == null
           ? Center(child: CircularProgressIndicator()) // 로딩 인디케이터
@@ -91,7 +91,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
                     child: TextField(
                       enabled: false,
                       controller: _useridController,
-                      decoration: InputDecoration(labelText: '아이디'),
+                      decoration: InputDecoration(labelText: 'ID'),
                     ),
                   ),
                   Container(
@@ -99,7 +99,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
                         horizontal: 50.0, vertical: 5.0),
                     child: TextField(
                       controller: _nameController,
-                      decoration: InputDecoration(labelText: '이름'),
+                      decoration: InputDecoration(labelText: 'NAME'),
                     ),
                   ),
                   Container(
@@ -107,7 +107,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
                         horizontal: 50.0, vertical: 5.0),
                     child: TextField(
                       controller: _pwdController,
-                      decoration: InputDecoration(labelText: '비밀번호'),
+                      decoration: InputDecoration(labelText: 'PWD'),
                     ),
                   ),
                   SizedBox(height: 20),
@@ -119,7 +119,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
                       onPressed: () {
                         _updateUserInfo();
                       },
-                      child: Text('저장'),
+                      child: Text('保存'),
                       style: ElevatedButton.styleFrom(
                         fixedSize: Size(115, 30),
                       ),

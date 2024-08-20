@@ -20,7 +20,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserData()),
       ],
       child: MaterialApp(
-        title: '영화 웹',
+        debugShowCheckedModeBanner: false,
+        title: '映画ウェブ',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

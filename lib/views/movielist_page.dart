@@ -174,9 +174,9 @@ class _MovieListState extends State<MovieList> {
                   imageUrl: movie.posterPath,
                   placeholder: (context, url) => CircularProgressIndicator(),
                   errorWidget: (context, url, error) => Icon(Icons.error),
-                  fit: BoxFit.cover,
-                  width: 100,
-                  height: 150,
+                  fit: BoxFit.fill,
+                  width: 120,
+                  height: 170,
                 ),
               ),
               Expanded(
@@ -188,7 +188,7 @@ class _MovieListState extends State<MovieList> {
                       Text(
                         movie.title,
                         style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 19.0,
                           fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -197,6 +197,9 @@ class _MovieListState extends State<MovieList> {
                       Text(
                         movie.overview,
                         maxLines: 3,
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -212,7 +215,10 @@ class _MovieListState extends State<MovieList> {
               child: hasViewed
                   ? TextButton(
                 onPressed: () => _deleteViewingHistory(movie),
-                child: Text('시청 취소'),
+                child: Text(
+                    'キャンセル',
+                    style: TextStyle(fontSize: 15.0)
+                ),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,
@@ -221,7 +227,10 @@ class _MovieListState extends State<MovieList> {
               )
                   : TextButton(
                 onPressed: () => _recordViewingHistory(movie),
-                child: Text('시청'),
+                child: Text(
+                    '視聴',
+                    style: TextStyle(fontSize: 15.0)
+                ),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.blue,
@@ -246,7 +255,7 @@ class _MovieListState extends State<MovieList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('영화 목록'),
+        title: Text('映画一覧'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -257,11 +266,11 @@ class _MovieListState extends State<MovieList> {
       body: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(15.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: '검색어를 입력하세요',
+                labelText: '検索ワードを入力してください。',
               ),
               onSubmitted: (query) => _onSearch(),
             ),
