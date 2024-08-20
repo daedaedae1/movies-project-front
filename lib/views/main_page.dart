@@ -268,23 +268,30 @@ class _MainPageState extends State<MainPage> {
           Container(
             color: Colors.white, // 두 번째 블럭의 배경색 설정
             child: Padding(
-              padding: const EdgeInsets.all(60.0), // 배경색 안쪽에 패딩 적용
+              padding: const EdgeInsets.all(130.0), // 배경색 안쪽에 패딩 적용
               child: Row(
                 children: <Widget>[
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 100), // 이미지 오른쪽 여백 설정
                       child: Image.network(
-                        'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
+                        'assets/images/list.png', // 여기에 이미지 URL을 입력하세요.
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   SizedBox(width: 16),
                   Expanded(
-                    child: Text(
-                      '회원가입 후 로그인하시면, 시청 기록을 관리하고,\n개인 맞춤형 영화 추천을 받으실 수 있습니다.',
-                      style: TextStyle(fontSize: 16),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 50), // 텍스트의 오른쪽 여백 설정
+                        child: Text(
+                          '会員登録後にログインすると、\n視聴履歴の管理や\n映画おすすめが受けられます。',
+                          style: TextStyle(fontSize: 28, color: Colors.black, fontWeight: FontWeight.bold), // 텍스트 설정
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -296,32 +303,36 @@ class _MainPageState extends State<MainPage> {
           Container(
             color: Colors.cyan[100], // 세 번째 블럭의 배경색 설정
             child: Padding(
-              padding: const EdgeInsets.all(60.0), // 배경색 안쪽에 패딩 적용
+              padding: const EdgeInsets.all(130.0), // 배경색 안쪽에 패딩 적용
               child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
                   children: <Widget>[
                     Image.network(
-                      'assets/images/ex1.jpeg', // 여기에 이미지 URL을 입력하세요.
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
+                      'assets/images/recom.png', // 여기에 이미지 URL을 입력하세요.
+                      width: 600,
+                      height: 300,
+                      fit: BoxFit.fill,
                     ),
                     SizedBox(height: 8),
-                    Text(
-                      '지금 바로 가입하고 Orora의 추천 기능을 만나보세요!',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 60), // 텍스트의 왼쪽 여백 설정
+                      child: Text(
+                        '今すぐ登録して、\nOroraのおすすめ機能を体験しよう！',
+                        style: TextStyle(
+                          fontSize: 28,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ), // 텍스트 설정
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );
