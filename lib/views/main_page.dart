@@ -312,7 +312,7 @@ class _MainPageState extends State<MainPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 100), // 이미지 오른쪽 여백 설정
                       child: Image.network(
-                        'assets/images/list.png', // 여기에 이미지 URL을 입력하세요.
+                        'assets/images/afterLogin.png', // 여기에 이미지 URL을 입력하세요.
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -347,7 +347,7 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
                   children: <Widget>[
                     Image.network(
-                      'assets/images/recom.png', // 여기에 이미지 URL을 입력하세요.
+                      'assets/images/set.png', // 여기에 이미지 URL을 입력하세요.
                       width: 600,
                       height: 300,
                       fit: BoxFit.fill,
