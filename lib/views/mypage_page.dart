@@ -47,7 +47,7 @@ class _UserInfoEditPageState extends State<MyPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final userid = prefs.getInt('userIdNumeric');
     if (userid != null) {
-      var url = Uri.parse('http://localhost:8080/api/$userid/delete');
+      var url = Uri.parse('http://localhost:8080/api/details/$userid/delete');
       var response = await http.delete(url);
       if (response.statusCode == 200) {
         print('회원탈퇴 성공: ${response.body}');

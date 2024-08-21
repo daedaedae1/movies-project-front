@@ -47,7 +47,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
     final prefs = await SharedPreferences.getInstance();
     final userid = prefs.getInt('userIdNumeric');
     if (userid != null) {
-      var url = Uri.parse('http://localhost:8080/api/$userid/update');
+      var url = Uri.parse('http://localhost:8080/api/details/$userid/update');
       var response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
