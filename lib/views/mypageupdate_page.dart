@@ -37,7 +37,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
           _nameController.text = userInfo['name'] ?? '';
         });
       } else {
-        print('서버 오류: ${response.statusCode}');
+        print('サーバーエラー: ${response.statusCode}');
         // 오류 처리
       }
     }

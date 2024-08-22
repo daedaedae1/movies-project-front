@@ -99,23 +99,23 @@ class SignUpPage extends StatelessWidget {
                       body: json.encode(user.toJson()));
 
                   if (response.statusCode == 200) {
-                    print('회원가입 성공: ${response.body}');
+                    print('会員登録成功: ${response.body}');
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => MainPage()));
                   } else {
-                    print('회원가입 실패: ${response.statusCode}');
+                    print('会員登録失敗: ${response.statusCode}');
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('회원가입 실패: ${response.statusCode}'),
+                        content: Text('会員登録失敗: ${response.statusCode}'),
                         backgroundColor: Colors.red,
                       ),
                     );
                   }
                 } catch (e) {
-                  print('회원가입 중 오류 발생: $e');
+                  print('会員登録中にエラーが発生しました。: $e');
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('회원가입 중 오류 발생: $e'),
+                      content: Text('会員登録中にエラーが発生しました。: $e'),
                       backgroundColor: Colors.red,
                     ),
                   );

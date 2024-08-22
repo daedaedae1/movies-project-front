@@ -38,7 +38,7 @@ class _UserInfoEditPageState extends State<MyPage> {
           _nameController.text = userInfo['name'] ?? '';
         });
       } else {
-        print('서버 오류: ${response.statusCode}');
+        print('サーバーエラー: ${response.statusCode}');
       }
     }
   }
@@ -50,12 +50,12 @@ class _UserInfoEditPageState extends State<MyPage> {
       var url = Uri.parse('http://localhost:8080/api/details/$userid/delete');
       var response = await http.delete(url);
       if (response.statusCode == 200) {
-        print('회원탈퇴 성공: ${response.body}');
+        print('会員退会成功: ${response.body}');
         await prefs.clear();
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (context) => MainPage()));
       } else {
-        print('서버 오류: ${response.statusCode}');
+        print('サーバーエラー: ${response.statusCode}');
       }
     }
   }
@@ -96,7 +96,7 @@ class _UserInfoEditPageState extends State<MyPage> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MainPage()));
     } else {
-      print('로그아웃 실패: ${response.reasonPhrase}');
+      print('ログアウト失敗: ${response.reasonPhrase}');
     }
   }
 

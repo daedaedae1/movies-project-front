@@ -49,10 +49,10 @@ class _MovieListState extends State<MovieList> {
           _currentPage++;
         });
       } else {
-        throw Exception('영화 목록을 불러오는 데 실패했습니다: ${response.statusCode}');
+        throw Exception('映画リストを取得する際に失敗しました。: ${response.statusCode}');
       }
     } catch (e) {
-      print('영화 목록을 가져오는 중 오류 발생: $e');
+      print('映画リストを取得中にエラーが発生しました。: $e');
     } finally {
       _isFetching = false;
     }
@@ -73,7 +73,7 @@ class _MovieListState extends State<MovieList> {
         _viewedMovies = viewedMoviesJson.map<int>((jsonItem) => jsonItem['movieId'] as int).toList();
       });
     } else {
-      throw Exception('시청 기록을 불러오는 데 실패했습니다: ${response.statusCode}');
+      throw Exception('視聴履歴を取得する際に失敗しました。: ${response.statusCode}');
     }
   }
 
@@ -94,10 +94,10 @@ class _MovieListState extends State<MovieList> {
     );
 
     if (response.statusCode == 200) {
-      print('시청 기록 저장 완료');
+      print('視聴履歴の保存が完了しました。');
       await _fetchViewedMovies();  // 시청 기록을 다시 불러옴
     } else {
-      throw Exception('시청 기록 저장 실패: ${response.statusCode}');
+      throw Exception('視聴履歴の保存に失敗しました。: ${response.statusCode}');
     }
   }
 
@@ -114,10 +114,10 @@ class _MovieListState extends State<MovieList> {
     );
 
     if (response.statusCode == 204) {
-      print('시청 기록 삭제 완료');
+      print('視聴履歴の削除が完了しました。');
       await _fetchViewedMovies();  // 시청 기록을 다시 불러옴
     } else {
-      throw Exception('시청 기록 삭제 실패: ${response.statusCode}');
+      throw Exception('視聴履歴の削除に失敗しました。: ${response.statusCode}');
     }
   }
 

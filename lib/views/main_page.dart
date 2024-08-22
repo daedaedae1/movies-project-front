@@ -247,7 +247,7 @@ class _MainPageState extends State<MainPage> {
           Text(
             'お気軽に映画リストやおすすめ機能をお試しください！',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 17,
               fontWeight: FontWeight.normal,
               color: Colors.grey[700],
             ),

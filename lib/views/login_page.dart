@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (success) {
         // 로그인 성공 처리
-        print('로그인 성공');
+        print('ログイン成功');
 
         // 로그인 성공시 로그인 상태 및 ID 저장
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
             context, MaterialPageRoute(builder: (context) => MainPage()));
       } else {
         // 로그인 실패 처리
-        print('로그인 실패');
+        print('ログイン失敗');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('ログインに失敗しました。'),
@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     } else {
       // 서버 오류 처리
-      print('서버 오류: ${response.statusCode}');
+      print('サーバーエラー: ${response.statusCode}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('ログインに失敗しました。'),

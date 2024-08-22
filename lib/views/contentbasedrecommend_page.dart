@@ -47,10 +47,10 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
           _displayedMovies = _getRandomMovies(_recommendedMovies, 5); // 랜덤으로 5개 영화 선택
         });
       } else {
-        throw Exception('추천 영화를 불러오는 데 실패했습니다: ${response.statusCode}');
+        throw Exception('おすすめ映画の取得に失敗しました。: ${response.statusCode}');
       }
     } catch (e) {
-      print('추천 영화를 가져오는 중 오류 발생: $e');
+      print('おすすめ映画を取得中にエラーが発生しました。: $e');
       setState(() {
         _hasError = true;
       });
@@ -131,9 +131,25 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
       body: _isFetching
           ? Center(child: CircularProgressIndicator())
           : _hasError
-          ? Center(child: Text('映画推薦を取得する際にエラーが発生しました。'))
+          ? Center(
+        child: Text(
+          '映画推薦を取得する際にエラーが発生しました。',
+          style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.normal,
+              color: Colors.grey[700]),
+        ),
+      )
           : _displayedMovies.isEmpty
-          ? Center(child: Text('視聴履歴を登録してください！'))
+          ? Center(
+        child: Text(
+          '視聴履歴を登録してください！',
+          style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.normal,
+              color: Colors.grey[700]),
+        ),
+      )
           : ListView.builder(
         itemCount: _displayedMovies.length,
         itemBuilder: (BuildContext context, int index) {
@@ -141,5 +157,6 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
         },
       ),
     );
+
   }
 }
