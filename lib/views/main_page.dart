@@ -290,7 +290,7 @@ class _MainPageState extends State<MainPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(right: 200), // 이미지 오른쪽 여백 설정
                       child: Image.network(
-                        'assets/images/first.png', // 여기에 이미지 URL을 입력하세요.
+                        'assets/images/first.png',
                         height: 300,
                         fit: BoxFit.contain,
                       ),
@@ -312,7 +312,7 @@ class _MainPageState extends State<MainPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 100), // 이미지 오른쪽 여백 설정
                       child: Image.network(
-                        'assets/images/afterLogin.png', // 여기에 이미지 URL을 입력하세요.
+                        'assets/images/afterLogin.png',
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -325,7 +325,10 @@ class _MainPageState extends State<MainPage> {
                         padding: const EdgeInsets.only(left: 50), // 텍스트의 오른쪽 여백 설정
                         child: Text(
                           '会員登録後にログインすると、\n視聴履歴の管理や\n映画おすすめが受けられます。',
-                          style: TextStyle(fontSize: 28, color: Colors.black, fontWeight: FontWeight.bold), // 텍스트 설정
+                          style: TextStyle(
+                              fontSize: 28,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold), // 텍스트 설정
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -336,7 +339,7 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
 
-          // 세 번째 블럭: 가운데 정렬된 이미지와 설명 내용
+          // 세 번째 블럭
           Container(
             color: Colors.cyan[100], // 세 번째 블럭의 배경색 설정
             child: Padding(
@@ -347,7 +350,7 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
                   children: <Widget>[
                     Image.network(
-                      'assets/images/set.png', // 여기에 이미지 URL을 입력하세요.
+                      'assets/images/set.png',
                       width: 600,
                       height: 300,
                       fit: BoxFit.fill,
