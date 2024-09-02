@@ -48,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
           SnackBar(
             content: Text('ログインに失敗しました。'),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ),
         );
       }
@@ -56,8 +57,9 @@ class _LoginPageState extends State<LoginPage> {
       print('サーバーエラー: ${response.statusCode}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('ログインに失敗しました。'),
+          content: Text('ユーザーIDまたはパスワードが一致しません。'),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ),
       );
     }
@@ -90,7 +92,22 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _login,
+              onPressed: () async {
+                if (_useridController.text.isEmpty || _pwdController.text.isEmpty) {
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('すべての項目を入力してください。'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                return;
+                }
+                else {
+                  await _login();
+                }
+              },
               child: Text('ログイン'),
             ),
           ],

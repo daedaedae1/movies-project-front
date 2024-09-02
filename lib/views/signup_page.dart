@@ -18,12 +18,12 @@ class SignUpPage extends StatelessWidget {
         final data = json.decode(response.body);
         return data['exists'];
       } else {
-        print('Failed to check user ID. Status code: ${response.statusCode}');
-        return false; // Assume the ID does not exist if the request fails
+        print('${response.statusCode}');
+        return false;
       }
     } catch (e) {
-      print('Error checking user ID: $e');
-      return false; // Assume the ID does not exist if there is an exception
+      print('$e');
+      return false;
     }
   }
 
@@ -68,6 +68,7 @@ class SignUpPage extends StatelessWidget {
                     SnackBar(
                       content: Text('すべての項目を入力してください。'),
                       backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
                     ),
                   );
                   return;
@@ -80,6 +81,7 @@ class SignUpPage extends StatelessWidget {
                     SnackBar(
                       content: Text('すでに存在するIDです。'),
                       backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
                     ),
                   );
                   return;
