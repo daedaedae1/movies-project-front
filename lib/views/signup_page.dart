@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // http 요청을 보내기 위한 import 문
+import 'package:http/http.dart' as http; // HTTPリクエスト送信用のインポート文
 import '../model/user.dart';
 import 'dart:convert';
 import 'main_page.dart';
@@ -60,7 +60,7 @@ class SignUpPage extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                // 모든 필드가 입력되었는지 확인
+                // すべてのフィールドが入力されているか確認
                 if (nameController.text.isEmpty ||
                     useridController.text.isEmpty ||
                     pwdController.text.isEmpty) {
@@ -74,7 +74,7 @@ class SignUpPage extends StatelessWidget {
                   return;
                 }
 
-                // 중복 아이디 확인
+                // 重複したIDが存在するか確認
                 final userIdExists = await _checkUserIdExists(useridController.text);
                 if (userIdExists) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -87,7 +87,7 @@ class SignUpPage extends StatelessWidget {
                   return;
                 }
 
-                // 회원가입 요청
+                // 会員登録リクエスト
                 User user = User(
                   name: nameController.text,
                   userid: useridController.text,
@@ -108,8 +108,9 @@ class SignUpPage extends StatelessWidget {
                     print('会員登録失敗: ${response.statusCode}');
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('会員登録失敗: ${response.statusCode}'),
+                        content: Text('会員登録に失敗しました。'),
                         backgroundColor: Colors.red,
+                        duration: Duration(seconds: 2),
                       ),
                     );
                   }
@@ -117,8 +118,9 @@ class SignUpPage extends StatelessWidget {
                   print('会員登録中にエラーが発生しました。: $e');
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('会員登録中にエラーが発生しました。: $e'),
+                      content: Text('会員登録中にエラーが発生しました。'),
                       backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
                     ),
                   );
                 }

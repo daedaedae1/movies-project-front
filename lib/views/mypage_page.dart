@@ -11,11 +11,11 @@ class MyPage extends StatefulWidget {
 }
 
 class _UserInfoEditPageState extends State<MyPage> {
-  var _userInfo; // 사용자 정보를 저장할 변수
+  var _userInfo; // ユーザー情報を保存する変数
   TextEditingController _useridController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
-  int _selectedIndex = 2; // MyPage는 네비게이션 바에서 3번째 항목이므로 기본 인덱스는 2
+  int _selectedIndex = 2; // MyPageはナビゲーションバーの3番目の項目なので、基本インデックスは2
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class _UserInfoEditPageState extends State<MyPage> {
   }
 
   Future<void> logout() async {
-    var url = Uri.parse('http://localhost:8080/api/logout'); // 서버 URL을 설정하세요.
+    var url = Uri.parse('http://localhost:8080/api/logout');
     var response = await http.post(url,
         headers: {'Content-Type': 'application/json; charset=UTF-8'});
 
@@ -175,7 +175,7 @@ class _UserInfoEditPageState extends State<MyPage> {
           ),
           backgroundColor: Colors.white,
           foregroundColor: Colors.deepPurple,
-          elevation: 1, // 버튼의 그림자
+          elevation: 1,
         ),
       ),
     );
@@ -195,14 +195,14 @@ class _UserInfoEditPageState extends State<MyPage> {
             backgroundColor: MaterialStateProperty.resolveWith<Color>(
                     (Set<MaterialState> states) {
                   if (states.contains(MaterialState.pressed))
-                    return Colors.deepPurple; // 버튼이 눌렸을 때의 색상
-                  return Colors.red; // 기본 색상
+                    return Colors.deepPurple; // ボタンが押されたときの色
+                  return Colors.red; // 基本色
                 }),
             foregroundColor: MaterialStateProperty.resolveWith<Color>(
                     (Set<MaterialState> states) {
                   if (states.contains(MaterialState.pressed))
-                    return Colors.yellow; // 버튼이 눌렸을 때의 텍스트 색상
-                  return Colors.white; // 기본 텍스트 색상
+                    return Colors.yellow; // ボタンが押されたときのテキスト色
+                  return Colors.white; // 基本テキスト色
                 }),
           ),
         ),

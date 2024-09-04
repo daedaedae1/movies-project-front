@@ -29,20 +29,20 @@ class _LoginPageState extends State<LoginPage> {
       bool success = data['success'] ?? false;
 
       if (success) {
-        // 로그인 성공 처리
+        // ログイン成功処理
         print('ログイン成功');
 
-        // 로그인 성공시 로그인 상태 및 ID 저장
+        // ログイン成功時、ログイン状態およびIDを保存
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
         await prefs.setString('userId', _useridController.text);
-        await prefs.setInt('userIdNumeric', data['id']); // userId를 정수형으로 저장
+        await prefs.setInt('userIdNumeric', data['id']);
 
-        // 다음 페이지로 네비게이션
+        // 次のページへ遷移
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => MainPage()));
       } else {
-        // 로그인 실패 처리
+        // ログイン失敗処理
         print('ログイン失敗');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } else {
-      // 서버 오류 처리
+      // サーバーエラー処理
       print('サーバーエラー: ${response.statusCode}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

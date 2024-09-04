@@ -36,7 +36,6 @@ class _MovieListState extends State<MovieList> {
       final url = query == null
           ? Uri.parse('http://localhost:8080/movies/get?page=$_currentPage')
           : Uri.parse('http://localhost:8080/movies/search?query=$query&page=$_currentPage');
-
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -82,7 +81,7 @@ class _MovieListState extends State<MovieList> {
     final userid = prefs.getInt('userIdNumeric');
     if (userid == null) return;
 
-    var url = Uri.parse('http://localhost:8080/viewing_history'); // 서버 주소 교체
+    var url = Uri.parse('http://localhost:8080/viewing_history'); // サーバーアドレスを変更
 
     var response = await http.post(
       url,
@@ -95,7 +94,7 @@ class _MovieListState extends State<MovieList> {
 
     if (response.statusCode == 200) {
       print('視聴履歴の保存が完了しました。');
-      await _fetchViewedMovies();  // 시청 기록을 다시 불러옴
+      await _fetchViewedMovies();  // 視聴履歴を再取得
     } else {
       throw Exception('視聴履歴の保存に失敗しました。: ${response.statusCode}');
     }
@@ -106,7 +105,7 @@ class _MovieListState extends State<MovieList> {
     final userid = prefs.getInt('userIdNumeric');
     if (userid == null) return;
 
-    var url = Uri.parse('http://localhost:8080/viewing_history?userId=$userid&movieId=${movie.id}'); // 쿼리 파라미터 사용
+    var url = Uri.parse('http://localhost:8080/viewing_history?userId=$userid&movieId=${movie.id}');
 
     var response = await http.delete(
       url,
@@ -115,7 +114,7 @@ class _MovieListState extends State<MovieList> {
 
     if (response.statusCode == 204) {
       print('視聴履歴の削除が完了しました。');
-      await _fetchViewedMovies();  // 시청 기록을 다시 불러옴
+      await _fetchViewedMovies();  // 視聴履歴を再取得
     } else {
       throw Exception('視聴履歴の削除に失敗しました。: ${response.statusCode}');
     }
@@ -149,7 +148,8 @@ class _MovieListState extends State<MovieList> {
   }
 
   void _onScroll() {
-    if (!_isFetching && _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (!_isFetching && _scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       if (_isSearchActive) {
         _fetchMovies(query: _searchController.text);
       } else {

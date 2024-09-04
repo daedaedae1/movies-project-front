@@ -6,7 +6,7 @@ import 'movielist_page.dart';
 import 'contentbasedrecommend_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert'; // JSON 파싱을 위한 import
+import 'dart:convert'; // JSONパース用のインポート
 
 void main() {
   runApp(MyApp());
@@ -53,17 +53,17 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> logout() async {
-    var url = Uri.parse('http://localhost:8080/api/logout'); // 서버 URL을 설정하세요.
+    var url = Uri.parse('http://localhost:8080/api/logout'); // サーバーURLを設定
     var response = await http.post(url,
         headers: {'Content-Type': 'application/json; charset=UTF-8'}
     );
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
-      // 서버에서 로그아웃이 성공적으로 처리되었을 경우
+      // サーバーでログアウトが成功した場合
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', false);
-      await prefs.remove('userIdNumeric'); // 로그아웃 시 사용자 ID 제거
+      await prefs.remove('userIdNumeric'); // ログアウト時にユーザーIDを削除
 
       setState(() {
         _isLoggedIn = false;
@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> {
           context, MaterialPageRoute(builder: (context) => MainPage()));
 
     } else {
-      // 로그아웃 요청이 실패했을 경우
+      // ログアウトリクエストが失敗した場合
       print('로그아웃 실패: ${response.reasonPhrase}');
     }
   }
@@ -146,9 +146,9 @@ class _MainPageState extends State<MainPage> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            backgroundColor: Colors.transparent, // 상단바를 투명하게 설정
-            elevation: 0, // 그림자 제거
-            pinned: true, // 스크롤 시 상단바가 고정되도록 설정
+            backgroundColor: Colors.transparent, // トップバーを透明に設定
+            elevation: 0, // シャドウを削除
+            pinned: true, // スクロール時にトップバーが固定されるように設定
             flexibleSpace: FlexibleSpaceBar(
               title: Center(
                 child: Text(
@@ -159,7 +159,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               ),
-              titlePadding: EdgeInsets.all(0), // Title padding 설정
+              titlePadding: EdgeInsets.all(0), // タイトルのパディングを設定
               collapseMode: CollapseMode.parallax,
             ),
           ),
@@ -178,17 +178,17 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-// 로그인 됐을 때의 화면
+// ログイン時の画面
   Widget _buildLoggedInView() {
     return Center(
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Column이 최소 크기만큼만 차지하도록 설정
-        mainAxisAlignment: MainAxisAlignment.center, // 수직 중앙 정렬
-        crossAxisAlignment: CrossAxisAlignment.center, // 수평 중앙 정렬
+        mainAxisSize: MainAxisSize.min, // Columnが最小サイズだけを占めるように設定
+        mainAxisAlignment: MainAxisAlignment.center, // 縦の中央揃え
+        crossAxisAlignment: CrossAxisAlignment.center, // 横の中央揃え
         children: <Widget>[
-          // 영화 리스트 버튼
+          // 映画リストボタン
           Container(
-            margin: EdgeInsets.symmetric(vertical: 10.0), // 버튼 사이에 간격 추가
+            margin: EdgeInsets.symmetric(vertical: 10.0), // ボタン間に間隔を追加
             child: ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -202,18 +202,18 @@ class _MainPageState extends State<MainPage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent, // 버튼 배경색
-                fixedSize: Size(200, 60), // 버튼 크기
+                backgroundColor: Colors.blueAccent, // ボタンの背景色
+                fixedSize: Size(200, 60), // ボタンのサイズ
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0), // 버튼 모서리 둥글게
+                  borderRadius: BorderRadius.circular(12.0), // ボタンの角を丸く
                 ),
-                elevation: 8, // 버튼 그림자
+                elevation: 8, // ボタンのシャドウ
               ),
             ),
           ),
-          // 컨텐츠 기반 추천 버튼
+          // コンテンツベースの推薦ボタン
           Container(
-            margin: EdgeInsets.symmetric(vertical: 10.0), // 버튼 사이에 간격 추가
+            margin: EdgeInsets.symmetric(vertical: 10.0), // ボタン間に間隔を追加
             child: ElevatedButton.icon(
               onPressed: () {
                 if (_userId != null) {
@@ -233,17 +233,17 @@ class _MainPageState extends State<MainPage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange, // 버튼 배경색
-                fixedSize: Size(200, 60), // 버튼 크기
+                backgroundColor: Colors.deepOrange,
+                fixedSize: Size(200, 60),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0), // 버튼 모서리 둥글게
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
-                elevation: 8, // 버튼 그림자
+                elevation: 8,
               ),
             ),
           ),
-          // 추가적인 UI 요소 - 설명 텍스트
-          SizedBox(height: 30), // 버튼과 설명 사이의 간격
+          // 追加UI要素 - 説明テキスト
+          SizedBox(height: 30), // ボタンと説明の間隔
           Text(
             'お気軽に映画リストやおすすめ機能をお試しください！',
             style: TextStyle(
@@ -259,27 +259,27 @@ class _MainPageState extends State<MainPage> {
   }
 
 
-  // 로그아웃 됐을 때의 화면
+  // ログアウト時の画面
   Widget _buildLoggedOutView() {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // 첫 번째 블럭: 설명 내용 - 이미지
+          // 第一ブロック
           Container(
-            color: Colors.cyan, // 첫 번째 블럭의 배경색 설정
+            color: Colors.cyan, // 背景色を設定
             child: Padding(
-              padding: const EdgeInsets.all(60.0), // 배경색 안쪽에 패딩 적용
+              padding: const EdgeInsets.all(60.0), // 背景色の内側にパディングを適用
               child: Row(
                 children: <Widget>[
                   Expanded(
                     child: Align(
-                      alignment: Alignment.centerRight, // 우측 정렬
+                      alignment: Alignment.centerRight, // 右揃え
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 100), // 텍스트의 오른쪽 여백 설정
+                        padding: const EdgeInsets.only(right: 100), // テキストの右マージンを設定
                         child: Text(
                           '視聴履歴に基づいた\n映画推薦サイト',
-                          style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold), // 텍스트 설정
+                          style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold), // テキスト設定
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -288,7 +288,7 @@ class _MainPageState extends State<MainPage> {
                   SizedBox(width: 16),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 200), // 이미지 오른쪽 여백 설정
+                      padding: const EdgeInsets.only(right: 200), // 画像の右マージンを設定
                       child: Image.network(
                         'assets/images/first.png',
                         height: 300,
@@ -301,16 +301,16 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
 
-          // 두 번째 블럭: 이미지 - 설명 내용
+          // 第二ブロック
           Container(
-            color: Colors.white, // 두 번째 블럭의 배경색 설정
+            color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.all(130.0), // 배경색 안쪽에 패딩 적용
+              padding: const EdgeInsets.all(130.0),
               child: Row(
                 children: <Widget>[
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 100), // 이미지 오른쪽 여백 설정
+                      padding: const EdgeInsets.only(left: 100),
                       child: Image.network(
                         'assets/images/afterLogin.png',
                         fit: BoxFit.cover,
@@ -322,13 +322,13 @@ class _MainPageState extends State<MainPage> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 50), // 텍스트의 오른쪽 여백 설정
+                        padding: const EdgeInsets.only(left: 50),
                         child: Text(
                           '会員登録後にログインすると、\n視聴履歴の管理や\n映画おすすめが受けられます。',
                           style: TextStyle(
                               fontSize: 28,
                               color: Colors.black,
-                              fontWeight: FontWeight.bold), // 텍스트 설정
+                              fontWeight: FontWeight.bold),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -339,15 +339,15 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
 
-          // 세 번째 블럭
+          // 第三ブロック
           Container(
-            color: Colors.cyan[100], // 세 번째 블럭의 배경색 설정
+            color: Colors.cyan[100],
             child: Padding(
-              padding: const EdgeInsets.all(130.0), // 배경색 안쪽에 패딩 적용
+              padding: const EdgeInsets.all(130.0),
               child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Image.network(
                       'assets/images/set.png',
@@ -357,14 +357,14 @@ class _MainPageState extends State<MainPage> {
                     ),
                     SizedBox(height: 8),
                     Padding(
-                      padding: const EdgeInsets.only(top: 60), // 텍스트의 왼쪽 여백 설정
+                      padding: const EdgeInsets.only(top: 60),
                       child: Text(
                         '今すぐ登録して、\nOroraのおすすめ機能を体験しよう！',
                         style: TextStyle(
                           fontSize: 28,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-                        ), // 텍스트 설정
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),

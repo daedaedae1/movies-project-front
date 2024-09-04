@@ -10,7 +10,7 @@ class MyPageUpdate extends StatefulWidget {
 }
 
 class _UserInfoEditPageState extends State<MyPageUpdate> {
-  var _userInfo; // 사용자 정보를 저장할 변수
+  var _userInfo;
   TextEditingController _useridController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
@@ -28,7 +28,6 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
       var url = Uri.parse('http://localhost:8080/api/details/$userid');
       var response = await http.get(url);
       if (response.statusCode == 200) {
-        // 응답 바디를 UTF-8로 디코드
         var userInfo = json.decode(utf8.decode(response.bodyBytes));
         setState(() {
           _userInfo = userInfo;
@@ -38,7 +37,6 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
         });
       } else {
         print('サーバーエラー: ${response.statusCode}');
-        // 오류 처리
       }
     }
   }
@@ -59,15 +57,13 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
       );
 
       if (response.statusCode == 200) {
-        // 성공적으로 업데이트됨
-        print('User updated successfully');
+        print('アップデート成功');
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => MyPage()),
           (Route<dynamic> route) => false,
         );
       } else {
-        // 업데이트 실패
-        print('Failed to update user: ${response.body}');
+        print('アップデート失敗: ${response.body}');
       }
     }
   }
@@ -79,7 +75,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
         title: Text('アカウント設定'),
       ),
       body: _userInfo == null
-          ? Center(child: CircularProgressIndicator()) // 로딩 인디케이터
+          ? Center(child: CircularProgressIndicator()) // ローディングインジケーター, 円形の回転アニメーション
           : Padding(
               padding: EdgeInsets.all(16.0),
               child: ListView(
@@ -112,7 +108,7 @@ class _UserInfoEditPageState extends State<MyPageUpdate> {
                   ),
                   SizedBox(height: 20),
                   Container(
-                    alignment: Alignment.center, // 버튼을 가운데 정렬.
+                    alignment: Alignment.center, // ボタンを中央揃え
                     margin: const EdgeInsets.symmetric(
                         horizontal: 50.0, vertical: 5.0),
                     child: ElevatedButton(

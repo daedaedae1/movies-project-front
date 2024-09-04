@@ -16,7 +16,7 @@ class ContentBasedRecommendPage extends StatefulWidget {
 
 class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
   List<Movie> _recommendedMovies = [];
-  List<Movie> _displayedMovies = []; // 랜덤하게 선택된 5개의 영화
+  List<Movie> _displayedMovies = []; // ランダムに選ばれた5つの映画
   bool _isFetching = false;
   bool _hasError = false;
 
@@ -40,11 +40,12 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(utf8.decode(response.bodyBytes));
-        final List<Movie> movies = jsonResponse.map<Movie>((jsonItem) => Movie.fromJson(jsonItem)).toList();
+        final List<Movie> movies = jsonResponse.map<Movie>((jsonItem) =>
+            Movie.fromJson(jsonItem)).toList();
 
         setState(() {
           _recommendedMovies = movies;
-          _displayedMovies = _getRandomMovies(_recommendedMovies, 5); // 랜덤으로 5개 영화 선택
+          _displayedMovies = _getRandomMovies(_recommendedMovies, 5); // ランダムに5つの映画を選択
         });
       } else {
         throw Exception('おすすめ映画の取得に失敗しました。: ${response.statusCode}');
@@ -61,10 +62,10 @@ class _ContentBasedRecommendPageState extends State<ContentBasedRecommendPage> {
     }
   }
 
-  // 랜덤하게 n개의 영화를 선택하는 함수
+  // ランダムにn個の映画を選択する関数
   List<Movie> _getRandomMovies(List<Movie> movies, int n) {
     final random = Random();
-    // 리스트를 무작위로 섞고, 앞의 n개를 선택
+    // リストをランダムにシャッフルして、先頭のn個を選択
     movies.shuffle(random);
     return movies.take(n).toList();
   }
